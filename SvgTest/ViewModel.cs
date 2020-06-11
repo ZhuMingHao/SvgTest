@@ -72,18 +72,17 @@ namespace SvgTest
                     };
                     using (var memoryStream = new MemoryStream())
                     {
-                        using (var xmlTextWriter = XmlWriter.Create(memoryStream, settings))
-                        {
-                            _document.WriteTo(xmlTextWriter);
+                        
+                            _document.Save(memoryStream);
 
                             var ramStream = new InMemoryRandomAccessStream();
                             memoryStream.CopyTo(ramStream.AsStream());
                             ramStream.Seek(0);
-                            xmlTextWriter.Flush();
+                           
                             return ramStream;
                         }
                     }
-                }
+                
             }, cancellationToken
             );
         }
