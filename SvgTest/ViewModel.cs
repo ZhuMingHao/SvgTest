@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
@@ -13,7 +15,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace SvgTest
 {
-    public class ViewModel
+    public class ViewModel:INotifyPropertyChanged
     {
         public ViewModel()
         {
@@ -30,13 +32,20 @@ namespace SvgTest
             await SvgSource.SetSourceAsync(souce);
         }
         private SvgImageSource _svgSource;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged([CallerMemberName] string propertName= null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertName));
+        }
+
         public SvgImageSource SvgSource
         {
             get { return _svgSource; }
             set
             {
                 _svgSource = value;
-
+                OnPropertyChanged();
             }
         }
 

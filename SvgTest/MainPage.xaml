@@ -13,6 +13,11 @@
     </Page.DataContext>
 
     <Grid>
-        <!--<Image Source="{x:Bind SvgSource, Mode=OneWay}" Stretch="Uniform" />-->
+        <Image
+            x:Name="Myimage"
+            Source="{Binding SvgSource, Mode=OneWay}"
+            Stretch="Uniform"
+            />
+
     </Grid>
 </Page>

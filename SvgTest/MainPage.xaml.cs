@@ -32,6 +32,15 @@ namespace SvgTest
         {
             this.InitializeComponent();
         }
-       
+
+        private void Myimage_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Myimage.Source = MViewModel.SvgSource;
+        }
     }
 }
