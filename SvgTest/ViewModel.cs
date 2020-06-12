@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ namespace SvgTest
     public class ViewModel
     {
         public ViewModel()
-        {        
+        {
             LoadSvg();
         }
         private SVGGenerator generator;
@@ -43,11 +44,11 @@ namespace SvgTest
 
     public class SVGGenerator
     {
-       
+
         private XmlDocument _document;
         public SVGGenerator()
         {
-           
+
         }
         public async Task LoadSvg()
         {
@@ -61,7 +62,7 @@ namespace SvgTest
         }
         public async Task<IRandomAccessStream> GetSourceAsync(CancellationToken cancellationToken)
         {
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
                 using (var stringWriter = new StringWriter())
                 {
@@ -72,17 +73,18 @@ namespace SvgTest
                     };
                     using (var memoryStream = new MemoryStream())
                     {
-                        
-                            _document.Save(memoryStream);
-
-                            var ramStream = new InMemoryRandomAccessStream();
-                            memoryStream.CopyTo(ramStream.AsStream());
-                            ramStream.Seek(0);
-                           
-                            return ramStream;
+                        using (var xmlTextWriter = XmlWriter.Create(memoryStream, settings))
+                        {
+                            _document.Save(xmlTextWriter);
+                            xmlTextWriter.Flush();
+                            var ibuffer = memoryStream.GetWindowsRuntimeBuffer();
+                            InMemoryRandomAccessStream randomAccessStream = new InMemoryRandomAccessStream();
+                            await randomAccessStream.WriteAsync(ibuffer);
+                            randomAccessStream.Seek(0);
+                            return randomAccessStream;
                         }
                     }
-                
+                }
             }, cancellationToken
             );
         }
